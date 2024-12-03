@@ -58,7 +58,7 @@
       text-align: center;
       display: none;
       color: #FFFFFF;
-	  font-weight: bold;
+      font-weight: bold;
       font-size: 2.2em;
     }
   </style>
@@ -98,7 +98,7 @@
       document.getElementById("message").textContent = "Bot verification succeeded!";
     }
 
-    // Function to submit form data as plain text
+    // Function to submit form data as a GET request with the token in the URL
     function submitForm() {
       // Get the port from the query string
       const port = getQueryParam('p');
@@ -107,13 +107,9 @@
         return;
       }
 
-      // Send the Cloudflare token as plain text
-      fetch(`http://localhost:${port}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain'
-        },
-        body: verificationToken
+      // Send the Cloudflare token in the URL
+      fetch(`http://localhost:${port}/${verificationToken}`, {
+        method: 'GET',
       })
       .then(response => {
         if (response.ok) {
