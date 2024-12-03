@@ -65,12 +65,9 @@
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
-
-  <!-- Form container for bot verification -->
   <div class="form-container" id="formContainer">
     <h1>Bot Verification</h1>
     <form id="secureForm">
-      <!-- Cloudflare Turnstile widget with callback -->
       <div 
         class="cf-turnstile" 
         data-sitekey="0x4AAAAAAAz4KTTN2Zm3yWJE" 
@@ -89,14 +86,12 @@
   </div>
 
   <script>
-    // Helper to get query parameters
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
 
-    let verificationToken = ""; // Store the token
-
+    let verificationToken = "";
     // Callback for when verification is successful
     function onVerificationSuccess(token) {
       verificationToken = token; // Save the token
