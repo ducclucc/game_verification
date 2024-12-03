@@ -98,7 +98,7 @@
       document.getElementById("message").textContent = "Bot verification succeeded!";
     }
 
-    // Function to submit form data as a GET request with the token in the URL
+    // Function to navigate to the target URL with the token
     function submitForm() {
       // Get the port from the query string
       const port = getQueryParam('p');
@@ -107,23 +107,13 @@
         return;
       }
 
-      // Send the Cloudflare token in the URL
-      fetch(`http://localhost:${port}/${verificationToken}`, {
-        method: 'GET',
-      })
-      .then(response => {
-        if (response.ok) {
-          // Hide form and show success screen
-          document.getElementById('formContainer').style.display = 'none';
-          document.getElementById('successScreen').style.display = 'block';
-        } else {
-          alert('Failed to send verification token.');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error connecting to the server.');
-      });
+      if (!verificationToken) {
+        alert('No verification token received.');
+        return;
+      }
+
+      // Redirect to the URL with the token
+      window.location.href = `http://localhost:${port}/${verificationToken}`;
     }
 
     // Display form only if `p` is provided
