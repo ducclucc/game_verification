@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bot Verification</title>
+  <style>
+    /* Set the black background and center the content */
+    body {
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Simple styling for the form */
+    .form-container {
+      text-align: center;
+      max-width: 400px;
+      padding: 20px;
+      border: 1px solid #444;
+      background-color: #222;
+      border-radius: 8px;
+      display: none;
+    }
+
+    /* Improved button styling */
+    button {
+      background: linear-gradient(145deg, #555, #333);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 1em;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    button:hover {
+      background: linear-gradient(145deg, #666, #444);
+      box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    button:active {
+      background: linear-gradient(145deg, #444, #222);
+      transform: scale(0.98);
+    }
+
+    /* Success screen styling */
+    .success-screen {
+      text-align: center;
+      display: none;
+      color: #FFFFFF;
+	  font-weight: bold;
+      font-size: 2.2em;
+    }
+  </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+
+  <!-- Form container for bot verification -->
+  <div class="form-container" id="formContainer">
+    <h1>Bot Verification</h1>
+    <form id="secureForm">
+      <!-- Cloudflare Turnstile widget with callback -->
+      <div 
+        class="cf-turnstile" 
+        data-sitekey="0x4AAAAAAAz4KTTN2Zm3yWJE" 
+        data-callback="onVerificationSuccess">
+      </div>
+
+      <!-- Improved Submit Button -->
+      <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+    <div id="message" class="message"></div>
+  </div>
+
+  <!-- Success screen to show upon verification success -->
+  <div id="successScreen" class="success-screen">
+    Verification succeeded, close this window and get to the game!
+  </div>
+
+  <script>
+    // Helper to get query parameters
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    let verificationToken = ""; // Store the token
+
+    // Callback for when verification is successful
+    function onVerificationSuccess(token) {
+      verificationToken = token; // Save the token
+      document.getElementById("message").textContent = "Bot verification succeeded!";
+    }
+
+    // Function to submit form data as plain text
+    function submitForm() {
+      // Get the port from the query string
+      const port = getQueryParam('p');
+      if (!port) {
+        alert('No port provided in the query string.');
+        return;
+      }
+
+      // Send the Cloudflare token as plain text
+      fetch(`http://localhost:${port}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        body: verificationToken
+      })
+      .then(response => {
+        if (response.ok) {
+          // Hide form and show success screen
+          document.getElementById('formContainer').style.display = 'none';
+          document.getElementById('successScreen').style.display = 'block';
+        } else {
+          alert('Failed to send verification token.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error connecting to the server.');
+      });
+    }
+
+    // Display form only if `p` is provided
+    window.onload = function() {
+      const port = getQueryParam('p');
+      if (port) {
+        document.getElementById('formContainer').style.display = 'block';
+      } else {
+        alert('Please provide a port number in the query string.');
+      }
+    }
+  </script>
+
+</body>
+</html>
